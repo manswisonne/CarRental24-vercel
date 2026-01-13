@@ -69,7 +69,7 @@ const Dashboard = () => {
         <div className='p-4 md:p-6 border border-borderColor rounded-md max-w-lg w-full'>
           <h1>Recent Bookings</h1>
           <p className='text-gray-500'>Latest Customer Bookings</p>
-          {data.recentBookings.map((booking , index)=>(
+          {data.recentBookings && data.recentBookiings.map((booking , index)=>(
             <div key={index} className='mt-4 flex items-center justify-between '>
               <div className='flex items-center gap-2'>
                <div className='hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-primary/10'>
