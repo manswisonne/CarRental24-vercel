@@ -15,6 +15,7 @@ import ManageBookings from './pages/owner/ManageBookings'
 import { useAppContext } from './context/AppContext';
 import Login from './components/Login'
 import { Toaster } from 'react-hot-toast'
+import {useEffect } from 'react'
 
 
 
@@ -22,6 +23,11 @@ const App = () => {
   const location = useLocation()
   const isOwnerPath = location.pathname.startsWith('/owner')
   const { showLogin } = useAppContext() 
+  useEffect(() => {
+    if (location.pathname.startsWith('/owner')) {
+      // Close login modal on owner routes if needed
+    }
+  }, [location.pathname])
   return (
     <>
       <Toaster />
