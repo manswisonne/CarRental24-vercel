@@ -119,7 +119,7 @@ const CarCard = ({ car, onClick }) => {
                         e.stopPropagation()
                         if (isAvailable) {
                             // Handle booking action
-                            navigate(`/booking/${car._id}`)
+                            navigate(`/car-details/${car._id}`)
                             window.scrollTo(0, 0)
                         }
                     }}
