@@ -6,7 +6,7 @@ import Cars from './pages/Cars'
 import CarDetails from './pages/CarDetails'
 import MyBookings from './pages/MyBookings'
 import Footer from './components/Footer'
-
+import {Navigate} from 'react-router-dom'
 import Layout from './pages/owner/Layout'
 import Dashboard from './pages/owner/Dashboard'
 import AddCar from './pages/owner/AddCar'
@@ -41,6 +41,7 @@ const App = () => {
             <Route path="add-car" element={<AddCar />} />
             <Route path="manage-cars" element={<ManageCars />} />
             <Route path="manage-bookings" element={<ManageBookings />} />
+            <Route path="/booking/:id" element={<Navigate to="/car-details/:id" />} />
           </Route>
         </Routes>
       </div>
