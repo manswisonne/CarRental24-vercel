@@ -34,6 +34,7 @@ const App = () => {
           <Route path="/cars" element={<Cars />} />
           <Route path="/car-details/:id" element={<CarDetails />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+           <Route path="/booking/:id" element={<Navigate to="/car-details/:id" />} />
           <Route path="/login" element={<Login />} />
 
           <Route path="/owner" element={<Layout />}>
@@ -41,7 +42,7 @@ const App = () => {
             <Route path="add-car" element={<AddCar />} />
             <Route path="manage-cars" element={<ManageCars />} />
             <Route path="manage-bookings" element={<ManageBookings />} />
-            <Route path="/booking/:id" element={<Navigate to="/car-details/:id" />} />
+           
           </Route>
         </Routes>
       </div>
