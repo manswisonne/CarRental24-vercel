@@ -143,7 +143,7 @@ import CarCard from './CarCard'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import { motion } from 'motion/react'
-
+import {useEffect} from 'react'
 const FeaturedSection = () => {
   const navigate = useNavigate()
   const { cars, fetchCars } = useAppContext()
