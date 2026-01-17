@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import Title from '../../components/owner/Title'
 import { useAppContext } from '../../context/AppContext'
 import { toast } from 'react-hot-toast'  // ← ADD THIS IMPORT
+import {useEffect} from 'react'
 
 const ManageBookings = () => {
 
