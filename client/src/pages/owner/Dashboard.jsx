@@ -1,106 +1,129 @@
 import React, { useEffect, useState } from 'react'
-import { dummyDashboardData, assets } from '../../assets/assets'
+import { assets } from '../../assets/assets'
 import Title from '../../components/owner/Title'
 import { useAppContext } from '../../context/AppContext'
-
+import { toast } from 'react-hot-toast' // ADD THIS IMPORT
 
 const Dashboard = () => {
-  const {axios, isOwner , currency} = useAppContext()
-  // const currency = import.meta.env.VITE_CURRENCY
-  const [data , setData] = useState({
-    totalCars:0,
-    totalBookings:0,
-    pendingBookings:0,
-    completedBookings:0,
-    recentBookings:[],
-    monthlyRevenue:0,
+  const { axios, isOwner, currency } = useAppContext()
+  
+  // ✅ FIXED: Initialize recentBookings as empty array
+  const [data, setData] = useState({
+    totalCars: 0,
+    totalBookings: 0,
+    pendingBookings: 0,
+    completedBookings: 0,
+    recentBookings: [], // ✅ This is the fix!
+    monthlyRevenue: 0,
+  })  
 
-  })
-
-  const dashboardCards =[
-    {title: "Total Cars", value: data.totalCars , icon:assets.carIconColored},
-    
-    {title: "Total Bookings", value: data.totalBookings , icon:assets.listIconColored},
-   
-    {title: "Pending", value: data.pendingBookings , icon:assets.cautionIconColored},
-    
-    {title: " Confirmed", value: data. completedBookings, icon:assets.listIconColored},
+  const dashboardCards = [
+    { title: "Total Cars", value: data.totalCars, icon: assets.carIconColored },
+    { title: "Total Bookings", value: data.totalBookings, icon: assets.listIconColored },
+    { title: "Pending", value: data.pendingBookings, icon: assets.cautionIconColored },
+    { title: "Confirmed", value: data.completedBookings, icon: assets.listIconColored },
   ]
 
-
-  const fetchDashboardData = async ()=>{
-  try {
-    const {data} = await axios.get('/api/owner/dashboard')
-    if(data.success){
-      setData(data.dashboardData)
-    }else{
-      toast.error(data.message)
+  const fetchDashboardData = async () => {
+    try {
+      const { data: responseData } = await axios.get('/api/owner/dashboard')
+      console.log("Dashboard API response:", responseData) // Debug log
+      
+      if (responseData.success) {
+        // ✅ Ensure recentBookings is always an array
+        setData({
+          ...responseData.dashboardData,
+          recentBookings: responseData.dashboardData?.recentBookings || []
+        })
+      } else {
+        toast.error(responseData.message || 'Failed to fetch dashboard data')
+      }
+    } catch (error) {
+      console.error("Dashboard fetch error:", error)
+      toast.error(error.response?.data?.message || error.message || 'Failed to load dashboard')
     }
-  } catch (error) {
-    toast.error(error.message)
   }
-  }
-  useEffect(()=>{
 
-    if(isOwner){
+  useEffect(() => {
+    if (isOwner) {
       fetchDashboardData()
     }
-   
-  },[isOwner])
+  }, [isOwner])
+
   return (
     <div className='px-4 pt-10 md:px-10 flex-1'>
-      <Title title= "Admin Dashboard" subTitle="Monitor overall platform performance 
-      including total cars , bookings , revenue and recent activities"/>
+      <Title 
+        title="Admin Dashboard" 
+        subTitle="Monitor overall platform performance including total cars, bookings, revenue and recent activities"
+      />
+      
       <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-8 max-w-3xl'>
-        {dashboardCards.map((card , index)=>(
-        <div key={index} className='flex gap-2 items-center justify-between p-4 rounded-md border border-borderColor'>
-          <div>
-            <h1 className='text-xs text-gray-500'>{card.title}</h1>
-            <p className='text-lg font-semibold'>{card.value}</p>
+        {dashboardCards.map((card, index) => (
+          <div key={index} className='flex gap-2 items-center justify-between p-4 rounded-md border border-borderColor'>
+            <div>
+              <h1 className='text-xs text-gray-500'>{card.title}</h1>
+              <p className='text-lg font-semibold'>{card.value}</p>
+            </div>
+            <div className='flex items-center justify-center w-10 h-10 rounded-full bg-primary/10'>
+              <img src={card.icon} alt="" className='h-4 w-4'/>
+            </div>
           </div>
-          <div className='flex items-center justify-center w-10 h-10 rounded-full bg-primary/10'>
-            <img src={card.icon} alt=""  className='h-4 w-4'/>
-          </div>
-        </div>
         ))}
       </div>
 
-      <div  className='flex flex-wrap items-start gap-6 mb-8 w-full'>
-        {/* recent bookings */}
+      <div className='flex flex-wrap items-start gap-6 mb-8 w-full'>
+        {/* Recent Bookings */}
         <div className='p-4 md:p-6 border border-borderColor rounded-md max-w-lg w-full'>
           <h1>Recent Bookings</h1>
           <p className='text-gray-500'>Latest Customer Bookings</p>
-          {data.recentBookings && data.recentBookiings.map((booking , index)=>(
-            <div key={index} className='mt-4 flex items-center justify-between '>
-              <div className='flex items-center gap-2'>
-               <div className='hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-primary/10'>
-                <img src={assets.listIconColored} alt=""  className='h-5 w-5'/>
-               </div>
-               <div>
-                <p>{booking.car.brand} {booking.car.model}</p>
-                <p className='text-sm text-gray-500'>{booking.createdAt.split('T')[0]}</p>
-               </div>
-              </div>
-
-              <div className='flex items-center gap-2 font-medium'>
-                <p className='text-sm text-gray-500'>{booking.price}</p>
-                <p className='px-3 py-0.5 border borderr-borderColor rounded-full text-sm'>{currency}{booking.status}</p>
-
-              </div>
+          
+          {/* ✅ FIXED: Safe mapping with fallback */}
+          {(data.recentBookings || []).length === 0 ? (
+            <div className="mt-4 text-center py-8">
+              <img 
+                src={assets.upload_icon} 
+                alt="No bookings" 
+                className="h-12 w-12 mx-auto mb-2 opacity-30"
+              />
+              <p className="text-gray-400 text-sm">No recent bookings</p>
             </div>
-          ))}
+          ) : (
+            (data.recentBookings || []).map((booking, index) => (
+              <div key={booking._id || index} className='mt-4 flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <div className='hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-primary/10'>
+                    <img src={assets.listIconColored} alt="" className='h-5 w-5'/>
+                  </div>
+                  <div>
+                    <p>{booking.car?.brand} {booking.car?.model}</p>
+                    <p className='text-sm text-gray-500'>
+                      {booking.createdAt ? new Date(booking.createdAt).toLocaleDateString() : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className='flex items-center gap-2 font-medium'>
+                  <p className='text-sm text-gray-500'>{currency}{booking.price || 0}</p>
+                  <p className='px-3 py-0.5 border border-borderColor rounded-full text-sm'>
+                    {booking.status || 'pending'}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-        {/* monthly revenue */}
+
+        {/* Monthly Revenue */}
         <div className='p-4 md:p-6 mb-6 border border-borderColor rounded-md w-full md:max-w-xs'>
           <h1 className='text-lg font-medium'>Monthly Revenue</h1>
           <p className='text-gray-500'>Revenue current month</p>
-          <p className='text-3xl mt-6 font-semibold text-primary'>{currency}{data.monthlyRevenue}</p>
+          <p className='text-3xl mt-6 font-semibold text-primary'>
+            {currency}{data.monthlyRevenue || 0}
+          </p>
         </div>
-        
       </div>
     </div>
   )
 }
 
 export default Dashboard
-
