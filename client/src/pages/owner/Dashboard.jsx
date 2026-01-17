@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { dummyDashboardData, assets } from '../../assets/assets'
 import Title from '../../components/owner/Title'
 import { useAppContext } from '../../context/AppContext'
-import {useEffect} from 'react'
+
 
 const Dashboard = () => {
   const {axios, isOwner , currency} = useAppContext()
