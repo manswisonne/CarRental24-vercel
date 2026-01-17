@@ -197,7 +197,7 @@ const FeaturedSection = () => {
         <div className="mt-16 w-full flex justify-center">
           <div className="text-gray-500">Loading cars...</div>
         </div>
-      ) : cars.length === 0 ? (
+      ) : (cars || []).length === 0 ? (
         <div className="mt-16 w-full flex flex-col items-center justify-center">
           <img 
             src={assets.upload_icon} 
